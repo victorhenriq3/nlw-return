@@ -1,6 +1,5 @@
 import { MailAdapter } from "../adapters/mail-adapter"
 import { FeedbacksRepository } from "../repositories/FeedbacksRepository"
-import { PrismaFeedbackRepository } from "../repositories/prisma/prismaFeedbacksRepository"
 
 interface SubmitFeedbackUseCaseRequest{
     type: string
@@ -16,6 +15,18 @@ export class SubmitFeedbackUseCase{
 
     async execute(request: SubmitFeedbackUseCaseRequest){
         const {type, comment, screenshot} = request
+
+        if(!type){
+            throw new Error('type is required')
+        }
+        
+        if(!comment){
+            throw new Error('comment is required')
+        }
+
+        if(screenshot && !screenshot.startsWith('data:image/png;base64')){
+            throw new Error("invalid type screenshot")
+        }
 
         await this.feedbacksRepository.create({
             type,
