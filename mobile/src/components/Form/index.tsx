@@ -1,5 +1,6 @@
 import { ArrowLeft } from 'phosphor-react-native';
 import { captureScreen } from "react-native-view-shot"
+import * as FileSystem from 'expo-file-system'
 import React, {useState} from 'react';
 import { 
     View,
@@ -53,16 +54,17 @@ export function Form({ feedbackType, onFeedbackCanceled, onFeedbackSent }:Props)
         }
 
         setIsSendingFeedback(true)
+        const screenshotBase64 = screenShot && await FileSystem.readAsStringAsync(screenShot, { encoding: 'base64' })
 
         try {
             await api.post("/feedbacks", {
                 type: feedbackType,
-                screenShot,
+                screenShot: `data:image/png;base64, ${screenshotBase64}`,
                 comment
             })
 
             onFeedbackSent()
-            
+
         } catch (error) {
             console.log(error);
             setIsSendingFeedback(false)
