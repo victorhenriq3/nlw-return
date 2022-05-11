@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { View, TouchableOpacity} from 'react-native';
+import { TouchableOpacity} from 'react-native';
 import { ChatTeardropDots } from "phosphor-react-native"
 import { styles } from './styles';
 import { theme } from '../../theme';
@@ -32,7 +32,9 @@ function Widget() {
         handleIndicatorStyle={styles.indicator}
       > 
         <Options />
+
         <Form feedbackType="BUG"/>
+
       </BottomSheet>
     </>
   );
