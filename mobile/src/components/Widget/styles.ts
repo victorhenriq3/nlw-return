@@ -21,6 +21,5 @@ export const styles = StyleSheet.create({
   indicator: {
     backgroundColor: theme.colors.text_primary,
     width: 56,
-    padding: 0
   }
 });
