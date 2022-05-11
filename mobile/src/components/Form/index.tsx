@@ -16,16 +16,23 @@ import {FeedbackType} from '../Widget';
 import { feedbackTypes } from '../../utils/feedbackTypes'
 import { Screenshot } from '../Screenshot';
 import { Button } from '../Button';
+import { api } from '../../libs/api';
 
 interface Props {
     feedbackType: FeedbackType
+    onFeedbackCanceled: () => void;
+    onFeedbackSent: () => void
 }
 
-export function Form({ feedbackType }:Props) {
+export function Form({ feedbackType, onFeedbackCanceled, onFeedbackSent }:Props) {
 
   const feedbackTypeInfo = feedbackTypes[feedbackType]
 
   const [screenShot, setScreenShot] = useState<string | null>(null)
+
+  const [isSendingFeedback, setIsSendingFeedback] = useState<boolean>(false)
+
+  const [comment, setComment] = useState('')
 
     function handleScreenshot(){
         captureScreen({
@@ -40,10 +47,32 @@ export function Form({ feedbackType }:Props) {
         setScreenShot(null)
     }
 
+    async function handleSendFeedback(){
+        if(isSendingFeedback){
+            return;
+        }
+
+        setIsSendingFeedback(true)
+
+        try {
+            await api.post("/feedbacks", {
+                type: feedbackType,
+                screenShot,
+                comment
+            })
+
+            onFeedbackSent()
+            
+        } catch (error) {
+            console.log(error);
+            setIsSendingFeedback(false)
+        }
+    }
+
   return (
     <View style={styles.container}>
         <View style={styles.header}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={onFeedbackCanceled}>
                 <ArrowLeft 
                     size={24}
                     weight="bold"
@@ -67,6 +96,8 @@ export function Form({ feedbackType }:Props) {
             style={styles.input}
             placeholder="Algo nao esta funcionando bem? digite seu problema"
             placeholderTextColor={theme.colors.text_secondary}
+            autoCorrect={false}
+            onChangeText={setComment}
         />
 
         <View style={styles.footer}>
@@ -75,7 +106,10 @@ export function Form({ feedbackType }:Props) {
                 onRemoveShot={handleScreenShotRemove}
                 screenshot={screenShot}
             />
-            <Button isLoading={false}/>
+            <Button 
+                onPress={handleSendFeedback}
+                isLoading={isSendingFeedback}
+            />
         </View>
     </View>
   );

@@ -9,7 +9,7 @@ export const styles = StyleSheet.create({
       backgroundColor: theme.colors.surface_secondary,
       justifyContent: 'center',
       alignItems: 'center',
-      marginRight: 'absolute'
+      marginRight: 8
   },
   removeIcon: {
       position: 'relative',
